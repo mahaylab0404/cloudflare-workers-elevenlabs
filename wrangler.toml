@@ -1,6 +1,8 @@
 name = "cayesdesk-agent"
-pages_build_output_dir = "dist"
 compatibility_date = "2026-04-28"
+
+[assets]
+directory = "./dist"
 
 [[kv_namespaces]]
 binding = "eleven_labs_agent_tools"
