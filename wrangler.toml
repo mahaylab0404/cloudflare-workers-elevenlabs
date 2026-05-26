@@ -1,0 +1,7 @@
+name = "cayesdesk"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-04-28"
+
+[[kv_namespaces]]
+binding = "eleven_labs_agent_tools"
+id = "7561564432af4cd8a9006afb384d3f19"
