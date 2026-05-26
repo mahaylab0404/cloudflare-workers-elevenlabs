@@ -1,4 +1,5 @@
 name = "cayesdesk-agent"
+account_id = "61dd8de53dcc6ea9ba7fab9c9581564d"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-04-28"
 
