@@ -15,6 +15,7 @@
  */
 
 const OWNER_EMAILS = ['hello@cayesdesk.com', 'admin@caytral.com'];
+const FROM_EMAIL = 'hello@cayesdesk.com';
 const BOOKING_LINK = 'https://calendar.app.google/G4e2xwxJSjt4bt8p6';
 
 export default {
@@ -202,7 +203,7 @@ async function sendEmail(env, { to, subject, text }) {
 
   const payload = {
     personalizations: recipients.map((email) => ({ to: [{ email }] })),
-    from: { email: env.FROM_EMAIL, name: 'Aria at CayesDesk' },
+    from: { email: FROM_EMAIL, name: 'Aria at CayesDesk' },
     subject,
     content: [{ type: 'text/plain', value: text }],
     tracking_settings: {
