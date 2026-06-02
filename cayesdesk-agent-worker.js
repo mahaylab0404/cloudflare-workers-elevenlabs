@@ -27,6 +27,10 @@ export default {
       path === '/send-booking-link' ||
       path === '/api/kill-switch';
 
+    if (isApiRoute) {
+      console.log(`[${path}] SENDGRID_API_KEY set: ${!!env.SENDGRID_API_KEY}, FROM_EMAIL set: ${!!env.FROM_EMAIL}`);
+    }
+
     if (!isApiRoute) {
       return env.ASSETS.fetch(request);
     }
@@ -82,7 +86,7 @@ Follow up within 1 business day.
     return jsonOk({ success: true, message: 'Lead captured' });
   } catch (err) {
     console.error('capture_lead error:', err);
-    return jsonError('Failed to capture lead', 500);
+    return jsonError(`Failed to capture lead: ${err.message}`, 500);
   }
 }
 
@@ -138,7 +142,7 @@ Calendly Link:  ${BOOKING_LINK}
     return jsonOk({ success: true, message: 'Booking link sent' });
   } catch (err) {
     console.error('send_booking_link error:', err);
-    return jsonError('Failed to send booking link', 500);
+    return jsonError(`Failed to send booking link: ${err.message}`, 500);
   }
 }
 
