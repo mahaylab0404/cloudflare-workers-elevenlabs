@@ -17,6 +17,7 @@
 const OWNER_EMAILS = ['hello@cayesdesk.com', 'admin@caytral.com'];
 const FROM_EMAIL = 'hello@cayesdesk.com';
 const BOOKING_LINK = 'https://calendar.app.google/G4e2xwxJSjt4bt8p6';
+const BOOKING_TEMPLATE_ID = 'd-97cf691457bf4eb2910dc6736d3c449c';
 
 export default {
   async fetch(request, env, ctx) {
@@ -101,21 +102,6 @@ async function handleSendBookingLink(body, env) {
   const displayName = name && name !== 'there' ? name : 'there';
   const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
 
-  const prospectEmailBody = `
-Hi ${displayName},
-
-Thank you for your interest in CayesDesk! Here is your link to schedule a discovery call or demo with our team:
-
-${BOOKING_LINK}
-
-Pick any time that works for you — we look forward to speaking with you.
-
-Warm regards,
-Aria
-CayesDesk Concierge
-hello@cayesdesk.com
-`.trim();
-
   const ownerEmailBody = `
 Booking Link Sent via Aria
 -------------------------------------------
@@ -128,10 +114,14 @@ Calendly Link:  ${BOOKING_LINK}
 
   try {
     await Promise.all([
-      sendEmail(env, {
-        to: [email],
+      sendTemplateEmail(env, {
+        to: email,
         subject: 'Your CayesDesk Discovery Call Link',
-        text: prospectEmailBody,
+        templateId: BOOKING_TEMPLATE_ID,
+        dynamicData: {
+          display_name: displayName,
+          booking_link: BOOKING_LINK,
+        },
       }),
       sendEmail(env, {
         to: OWNER_EMAILS,
@@ -206,6 +196,37 @@ async function sendEmail(env, { to, subject, text }) {
     from: { email: FROM_EMAIL, name: 'Aria at CayesDesk' },
     subject,
     content: [{ type: 'text/plain', value: text }],
+    tracking_settings: {
+      click_tracking: { enable: false },
+      open_tracking: { enable: false },
+    },
+  };
+
+  const response = await fetchWithTimeout(
+    'https://api.sendgrid.com/v3/mail/send',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${env.SENDGRID_API_KEY}`,
+      },
+      body: JSON.stringify(payload),
+    },
+    8000
+  );
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`SendGrid error ${response.status}: ${err}`);
+  }
+}
+
+async function sendTemplateEmail(env, { to, subject, templateId, dynamicData }) {
+  const payload = {
+    personalizations: [{ to: [{ email: to }], dynamic_template_data: dynamicData }],
+    from: { email: FROM_EMAIL, name: 'Aria at CayesDesk' },
+    subject,
+    template_id: templateId,
     tracking_settings: {
       click_tracking: { enable: false },
       open_tracking: { enable: false },
