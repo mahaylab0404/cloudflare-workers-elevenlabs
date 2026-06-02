@@ -15,6 +15,7 @@
  */
 
 const OWNER_EMAILS = ['hello@cayesdesk.com', 'admin@caytral.com'];
+const LEAD_TO_EMAIL = 'admin@caytral.com';
 const FROM_EMAIL = 'hello@cayesdesk.com';
 const BOOKING_LINK = 'https://calendar.app.google/G4e2xwxJSjt4bt8p6';
 const BOOKING_TEMPLATE_ID = 'd-97cf691457bf4eb2910dc6736d3c449c';
@@ -80,7 +81,7 @@ Follow up within 1 business day.
 
   try {
     await sendEmail(env, {
-      to: OWNER_EMAILS,
+      to: [LEAD_TO_EMAIL],
       subject: `New CayesDesk Lead — ${name}`,
       text: emailBody,
     });
