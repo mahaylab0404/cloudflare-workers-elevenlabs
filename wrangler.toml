@@ -2,6 +2,13 @@ name = "cayesdesk-agent"
 main = "cayesdesk-agent-worker.js"
 compatibility_date = "2026-04-28"
 
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
