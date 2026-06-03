@@ -97,35 +97,17 @@ async function handleSendBookingLink(body, env) {
   }
 
   const displayName = name && name !== 'there' ? name : 'there';
-  const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-
-  const ownerEmailBody = `
-Booking Link Sent via Aria
--------------------------------------------
-Prospect Name:  ${displayName}
-Prospect Email: ${email}
-Sent At:        ${timestamp} ET
-Calendly Link:  ${BOOKING_LINK}
--------------------------------------------
-`.trim();
 
   try {
-    await Promise.all([
-      sendTemplateEmail(env, {
-        to: email,
-        subject: 'Your CayesDesk Discovery Call Link',
-        templateId: BOOKING_TEMPLATE_ID,
-        dynamicData: {
-          display_name: displayName,
-          booking_link: BOOKING_LINK,
-        },
-      }),
-      sendEmail(env, {
-        to: OWNER_EMAILS,
-        subject: `Booking Link Sent — ${displayName} (${email})`,
-        text: ownerEmailBody,
-      }),
-    ]);
+    await sendTemplateEmail(env, {
+      to: email,
+      subject: 'Your CayesDesk Discovery Call Link',
+      templateId: BOOKING_TEMPLATE_ID,
+      dynamicData: {
+        display_name: displayName,
+        booking_link: BOOKING_LINK,
+      },
+    });
 
     return jsonOk({ success: true, message: 'Booking link sent' });
   } catch (err) {
