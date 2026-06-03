@@ -19,6 +19,7 @@ const LEAD_TO_EMAIL = 'admin@caytral.com';
 const FROM_EMAIL = 'hello@cayesdesk.com';
 const BOOKING_LINK = 'https://calendar.app.google/G4e2xwxJSjt4bt8p6';
 const BOOKING_TEMPLATE_ID = 'd-97cf691457bf4eb2910dc6736d3c449c';
+const LEAD_TEMPLATE_ID = 'd-a3f9d94ae1f642dc810aeee89c64c729';
 
 export default {
   async fetch(request, env, ctx) {
@@ -67,23 +68,18 @@ async function handleCaptureLead(body, env) {
   const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const tier = service_interest || 'Not specified';
 
-  const emailBody = `
-New Lead from Aria (CayesDesk Voice Agent)
--------------------------------------------
-Name:             ${name}
-Email:            ${email}
-Phone:            ${phone}
-Service Interest: ${tier}
-Captured At:      ${timestamp} ET
--------------------------------------------
-Follow up within 1 business day.
-`.trim();
-
   try {
-    await sendEmail(env, {
-      to: [LEAD_TO_EMAIL],
+    await sendTemplateEmail(env, {
+      to: LEAD_TO_EMAIL,
       subject: `New CayesDesk Lead — ${name}`,
-      text: emailBody,
+      templateId: LEAD_TEMPLATE_ID,
+      dynamicData: {
+        name,
+        email,
+        phone,
+        service_interest: tier,
+        timestamp: `${timestamp} ET`,
+      },
     });
 
     return jsonOk({ success: true, message: 'Lead captured' });
